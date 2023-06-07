@@ -1,4 +1,4 @@
-Start: 
+Start:
 
 SetTimer, RestartComputer, 1000
 RestartComputer:
@@ -27,7 +27,7 @@ If ErrorLevel = 0
 }
 loop
 	{
-		   WinGetTitle, titulo, ahk_exe FaceRecogProject.exe
+		WinGetTitle, titulo, ahk_exe FaceRecogProject.exe
 		WinActivate, %titulo%
 		Sleep, 10000 ; Esperar 10 segundos
 		
