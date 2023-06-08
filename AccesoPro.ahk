@@ -1,11 +1,5 @@
 Start:
 
-SetTimer, RestartComputer, 1000
-RestartComputer:
-currentHour := A_Hour
-currentMin := A_Min
-currentSec := A_Sec
-
 Process, Exist, FaceRecogProject.exe
 If ErrorLevel = 0
 {
@@ -25,20 +19,42 @@ If ErrorLevel = 0
 	Else 	Run, "%A_Desktop%\Controle Acesso - EVO.appref-ms"
 		Sleep, 45000
 }
+
 loop
-	{
-		WinGetTitle, titulo, ahk_exe FaceRecogProject.exe
-		WinActivate, %titulo%
-		Sleep, 10000 ; Esperar 10 segundos
+{
+	SetTimer, RestartComputer, 1000
+	RestartComputer:
+	currentHour := A_Hour
+	currentMin := A_Min
+	currentSec := A_Sec
+	WinGetTitle, titulo, ahk_exe FaceRecogProject.exe
+	WinActivate, %titulo%
+	Sleep, 10000 ; Esperar 10 segundos
 		
-		if (currentHour = 10) and (currentMin = 15) and (currentSec = 0) 
-		{
-			Shutdown, 6 ; Reiniciar la computadora
-		}
-		if (currentHour = 16) and (currentMin = 0) and (currentSec = 0) 
-		{
+	Switch (currentHour)
+	{
+		Case 12:
+			if (currentMin == 20)
+			{
+				Shutdown, 6 ; Reiniciar la computadora
+			}else{}
+		Break
+
+		Case 16:
 			Run, cmd.exe /c ipconfig /flushdns,, hide
 			Sleep, 5000
-		}
+		Break
+
+		Default:
+			Process, Exist, FaceRecogProject.exe
+			if (ErrorLevel)
+			{
+			}else
+			{
+				RunWait, "%A_Desktop%\Controle Acesso - EVO.appref-ms"
+				Sleep, 20000
+			}
+		Break
 	}
+}
 Goto,Start
