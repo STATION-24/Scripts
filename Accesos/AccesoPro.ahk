@@ -1,4 +1,4 @@
-﻿Start:
+Start:
 
 Process, Exist, FaceRecogProject.exe
 If ErrorLevel = 0
@@ -51,8 +51,8 @@ loop
 
 		executed := 0 
 
-		Case 16:
-    		if(currentMin = 58 && !executed) 
+		Case 11:
+    		if(currentMin = 15 && !executed) 
     		{
         		upgrade := A_Startup . "\Upgrade.ahk"
         		if FileExist(upgrade)
