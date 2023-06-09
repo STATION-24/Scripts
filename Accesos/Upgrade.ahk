@@ -1,13 +1,14 @@
-﻿Start:
+Start:
+execute := 0
 targetFile := A_Startup . "\AccesoPro.exe"
-url := "https://drive.google.com/uc?export=download&id=171l-fcQfsCYYCA-JvNJLIq1hgMx17jaU"
+url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.exe"
 
 Process, Exist, AccesoPro.exe
-if ErrorLevel == 0
+if (ErrorLevel == 0) and (!execute) 
 {
     Process, Close, AccesoPro.exe
 
-    URLDownloadToFile,%url%,%USERPROFILE%\Desktop\AccesoPro 2.0.ahk
+    URLDownloadToFile,%url%,%USERPROFILE%\Desktop\AccesoPro.exe
     if ErrorLevel != 0
     {
         MsgBox, Error de conexion con GitHub.
@@ -21,8 +22,8 @@ if ErrorLevel == 0
 
         MsgBox, Actualizacion en progreso.
 
-        NewDestination := A_Startup . "\AccesoPro 2.0.ahk"
-        FileMove, %USERPROFILE%\Desktop\AccesoPro 2.0.ahk, %NewDestination%
+        NewDestination := A_Startup . "\AccesoPro.exe"
+        FileMove, %USERPROFILE%\Desktop\AccesoPro.exe, %NewDestination%
         if ErrorLevel != 0
         {
             MsgBox, Error al reemplazar el archivo existente.
@@ -32,6 +33,7 @@ if ErrorLevel == 0
             Run, %targetFile%
             MsgBox, Actualizacion completada de forma exitosa.
         }
+        execute := 1
     }
 }
 Goto, Start
