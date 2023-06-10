@@ -1,5 +1,7 @@
 Start:
 
+biometrias := "Cargando templates, aguarde"
+
 Process, Exist, FaceRecogProject.exe
 If ErrorLevel = 0
 {
@@ -32,9 +34,10 @@ loop
 	WinGetTitle, titulo, ahk_exe FaceRecogProject.exe
 	WinActivate, %titulo%
 	Sleep, 10000 ; Esperar 10 segundos
-		
+	executed := 0
+
 	Switch (currentHour)
-	{
+	{ 
 		Case 12:
 			if(currentMin = 20)
 			{
@@ -46,10 +49,8 @@ loop
 			if(currentMin = 20)
 			{
 				Run, cmd.exe /c ipconfig /flushdns,, hide
-			}
+			}else{}
 		Break
-
-		executed := 0 
 
 		Case 11:
     		if(currentMin = 15 && !executed) 
@@ -65,14 +66,14 @@ loop
 					UrlDownloadToFile,%URL%,%upgrade%
 					if(ErrorLevel != 0)
 					{
-						MsgBox, no se Descarga
+						MsgBox, Error de conexion con Servidor.
 					}
 					else
 					{
 						FileMove,%upgrade%,%upgrade%,1
 						if(ErrorLevel != 0)
 						{
-							MsgBox, no se Remplaza
+							MsgBox, Error al reemplazar el archivo existente.
 						}
 						else
 						{
@@ -81,17 +82,26 @@ loop
 					}
 				}
 				executed := 1
-			} 
+			}else{}
 		Break
 
 		Default:
 			Process, Exist, FaceRecogProject.exe
-			if (ErrorLevel)
+			if(ErrorLevel)
 			{
-			}else
+			}else if(!executed)
 			{
 				RunWait, "%A_Desktop%\Controle Acesso - EVO.appref-ms"
-				Sleep, 20000
+				Loop
+				{
+					Sleep, 500
+					Process, Exist, biometrias
+					if(ErrorLevel = 0)
+					{
+						break
+					}
+				}
+				executed := 1
 			}
 		Break
 	}
