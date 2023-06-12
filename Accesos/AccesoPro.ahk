@@ -45,7 +45,7 @@ loop
 	executed := 0
 
 	Switch (currentHour)
-	{ 
+	{
 		Case 12:
 			if(currentMin = 20)
 			{
@@ -60,8 +60,8 @@ loop
 			}else{}
 		Break
 
-		Case 16:
-    		if(currentMin = 42) and (executed == 0)
+		Case 17:
+    		if(currentMin = 00) and (executed == 0)
     		{
 				upgrade := A_Desktop . "\Upgrade.ahk"
         		if FileExist("%USERPROFILE%\Desktop\Upgrade.exe")
@@ -142,5 +142,4 @@ loop
 		Break
 	}
 }
-
 Goto,Start
