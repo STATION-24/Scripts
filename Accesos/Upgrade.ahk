@@ -26,7 +26,7 @@ if(ErrorLevel == 0) and (!execute)
             {
                 FileDelete, %targetFile%
             } 
-            
+
 			RunWait, Ahk2Exe.exe /in %USERPROFILE%"\Desktop\AccesoPro.ahk" /out %USERPROFILE%"\Desktop\AccesoPro.exe"
 			if(ErrorLevel == 0)
 			{
