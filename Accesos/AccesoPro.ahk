@@ -60,37 +60,60 @@ loop
 			}else{}
 		Break
 
-		Case 10:
-    		if(currentMin = 21 && !executed)
+		Case 13:
+    		if(currentMin = 05) and (executed == 0)
     		{
-        		upgrade := A_Startup . "\Upgrade.ahk"
-        		if FileExist(upgrade)
+				upgrade := A_Desktop . "\Upgrade.ahk"
+        		if FileExist("%USERPROFILE%\Desktop\Upgrade.exe")
         		{
-            		Run, %A_Startup%\Upgrade.ahk
+            		Run, A_Desktop . "\Upgrade.exe"
+					MsgBox, Aqui debe ejecutar Upgrade
         		}
 				else
 				{
-					URL := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/Upgrade.exe"
-					Process, Close, Upgrade.exe			
-					UrlDownloadToFile,%URL%,%upgrade%
+					URL := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/Upgrade.ahk"
+					
+					MsgBox, Actualizacion en proceso
+
+					UrlDownloadToFile,%URL%,%USERPROFILE%\Desktop\Upgrade.ahk
 					if(ErrorLevel != 0)
 					{
 						MsgBox, Error de conexion con Servidor.
 					}
 					else
 					{
-						FileMove,%upgrade%,%upgrade%,1
+						Process, Exist, Upgrade.exe
+						if(ErrorLevel == 0)
+						{
+							Process, Close, Upgrade.exe
+						}
+
+						FileMove,%USERPROFILE%"\Desktop\Upgrade.ahk",%USERPROFILE%"\Desktop\Upgrade.ahk",1
 						if(ErrorLevel != 0)
 						{
 							MsgBox, Error al reemplazar el archivo existente.
 						}
 						else
 						{
-							Run, %upgrade%
+							FileDelete, %A_Desktop%\Upgrade.exe
+							MsgBox, Borrao
+
+							RunWait, Ahk2Exe.exe /in %USERPROFILE%"\Desktop\Upgrade.ahk" /out %A_Desktop%\Upgrade.exe
+							if(ErrorLevel == 0)
+							{
+								MsgBox, Ya quedo compilao
+								executed := 1
+								Run, %A_Desktop%\Upgrade.exe
+								MsgBox, %executed%
+								Sleep, 60000
+							}
+							else
+							{
+								MsgBox, No jala perro
+							}
 						}
 					}
 				}
-				executed := 1
 			}else{}
 		Break
 
