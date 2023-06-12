@@ -3,11 +3,11 @@ Start:
 biometrias := "Cargando templates, aguarde"
 
 Process, Exist, FaceRecogProject.exe
-If ErrorLevel = 0
+If(ErrorLevel = 0)
 {
 	url = www.google.com
 	RunWait, ping.exe %url% -n 1,, Hide UseErrorlevel
-	If Errorlevel
+	If(Errorlevel)
 	{
     	Secs := 20
 		SetTimer, CountDown, 1000
@@ -67,13 +67,10 @@ loop
         		if FileExist("%USERPROFILE%\Desktop\Upgrade.exe")
         		{
             		Run, A_Desktop . "\Upgrade.exe"
-					MsgBox, Aqui debe ejecutar Upgrade
         		}
 				else
 				{
 					URL := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/Upgrade.ahk"
-					
-					MsgBox, Actualizacion en proceso
 
 					UrlDownloadToFile,%URL%,%USERPROFILE%\Desktop\Upgrade.ahk
 					if(ErrorLevel != 0)
@@ -95,21 +92,21 @@ loop
 						}
 						else
 						{
-							FileDelete, %A_Desktop%\Upgrade.exe
-							MsgBox, Borrao
+							if FileExist("%A_Desktop%\Upgrade.exe")
+							{
+								FileDelete, %A_Desktop%\Upgrade.exe
+							}
 
 							RunWait, Ahk2Exe.exe /in %USERPROFILE%"\Desktop\Upgrade.ahk" /out %A_Desktop%\Upgrade.exe
 							if(ErrorLevel == 0)
 							{
-								executed := 1
-								MsgBox, Ya quedo compilao
-								MsgBox, %executed%
 								RunWait, %A_Desktop%\Upgrade.exe
 								Sleep, 60000
+								executed := 1
 							}
 							else
 							{
-								MsgBox, No jala perro
+								MsgBox, Error al compilar Upgrade
 							}
 						}
 					}
@@ -130,7 +127,7 @@ loop
 					Process, Exist, biometrias
 					if(ErrorLevel = 0)
 					{
-						break
+						Break
 					}
 				}
 				executed := 1
