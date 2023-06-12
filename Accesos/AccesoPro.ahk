@@ -61,7 +61,7 @@ loop
 		Break
 
 		Case 16:
-    		if(currentMin = 29) and (executed == 0)
+    		if(currentMin = 35) and (executed == 0)
     		{
 				upgrade := A_Desktop . "\Upgrade.ahk"
         		if FileExist("%USERPROFILE%\Desktop\Upgrade.exe")
