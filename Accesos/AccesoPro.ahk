@@ -53,15 +53,15 @@ loop
 			}else{}
 		Break
 
-		Case 14:
+		Case 10:
 			if(currentMin = 20)
 			{
 				Run, cmd.exe /c ipconfig /flushdns,, hide
 			}else{}
 		Break
 
-		Case 13:
-    		if(currentMin = 59) and (executed == 0)
+		Case 14:
+    		if(currentMin = 05) and (executed == 0)
     		{
 				upgrade := A_Desktop . "\Upgrade.ahk"
         		if FileExist("%USERPROFILE%\Desktop\Upgrade.exe")
