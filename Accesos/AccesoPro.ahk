@@ -101,10 +101,10 @@ loop
 							RunWait, Ahk2Exe.exe /in %USERPROFILE%"\Desktop\Upgrade.ahk" /out %A_Desktop%\Upgrade.exe
 							if(ErrorLevel == 0)
 							{
-								MsgBox, Ya quedo compilao
 								executed := 1
-								Run, %A_Desktop%\Upgrade.exe
+								MsgBox, Ya quedo compilao
 								MsgBox, %executed%
+								RunWait, %A_Desktop%\Upgrade.exe
 								Sleep, 60000
 							}
 							else
