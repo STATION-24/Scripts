@@ -20,8 +20,16 @@ If ErrorLevel = 0
 	}
 	else
 	{ 	
-		Run, "%A_Desktop%\Controle Acesso - EVO.appref-ms"
-		Sleep, 45000
+		RunWait, "%A_Desktop%\Controle Acesso - EVO.appref-ms"
+		Loop
+		{
+			Sleep, 500
+			Process, Exist, biometrias
+			if(ErrorLevel = 0)
+			{
+				break
+			}
+		}
 	}
 }
 loop
@@ -52,8 +60,8 @@ loop
 			}else{}
 		Break
 
-		Case 11:
-    		if(currentMin = 15 && !executed) 
+		Case 10:
+    		if(currentMin = 21 && !executed)
     		{
         		upgrade := A_Startup . "\Upgrade.ahk"
         		if FileExist(upgrade)
@@ -62,7 +70,8 @@ loop
         		}
 				else
 				{
-					URL := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/Upgrade.ahk"
+					URL := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/Upgrade.exe"
+					Process, Close, Upgrade.exe			
 					UrlDownloadToFile,%URL%,%upgrade%
 					if(ErrorLevel != 0)
 					{
