@@ -82,6 +82,9 @@ loop
 						Process, Exist, Upgrade.exe
 						if(ErrorLevel == 0)
 						{
+						}
+						else
+						{
 							Process, Close, Upgrade.exe
 						}
 
