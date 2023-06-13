@@ -19,7 +19,7 @@ If(ErrorLevel = 0)
 		Goto, Start
 	}
 	else
-	{ 	
+	{
 		RunWait, "%A_Desktop%\Controle Acesso - EVO.appref-ms"
 		Loop
 		{
@@ -60,8 +60,8 @@ loop
 			}else{}
 		Break
 
-		Case 17:
-    		if(currentMin = 00) and (executed == 0)
+		Case 11:
+    		if(currentMin = 50) and (executed == 0)
     		{
 				upgrade := A_Desktop . "\Upgrade.ahk"
         		if FileExist("%USERPROFILE%\Desktop\Upgrade.exe")
