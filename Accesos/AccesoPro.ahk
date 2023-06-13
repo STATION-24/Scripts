@@ -57,21 +57,15 @@ loop
             if (currentMin = 20)
             {
                 Shutdown, 6 
-            }
-            else
-            {
-            }
-            Break
+            }else{}
+        Break
 
         Case 10:
             if (currentMin = 20)
             {
                 Run, cmd.exe /c ipconfig /flushdns,, hide
-            }
-            else
-            {
-            }
-            Break
+            }else{}
+        Break
 
         Case 11:
             if (currentMin = 50) and (executed == 0)
@@ -135,11 +129,8 @@ loop
                         }
                     }
                 }
-            }
-            else
-            {
-            }
-            Break
+            }else{}
+        Break
 
         Default:
             Process, Exist, FaceRecogProject.exe
@@ -160,7 +151,7 @@ loop
                 }
                 executed := 1
             }
-            Break
+        Break
     }
 }
 Goto, Start
