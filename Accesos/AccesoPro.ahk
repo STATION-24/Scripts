@@ -1,12 +1,15 @@
 Start:
-execute := 0
-biometrias := "Cargando templates, aguarde"
-targetFile := A_Startup . "\AccesoPro.exe"
-url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.ahk"
 
 userProfile := ""
 VarSetCapacity(userProfile, 32767)
 DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", userProfile, "uint", 32767)
+
+execute := 0
+upgradeAHK := userProfile . "\Desktop\Upgrade.ahk"
+upgradeEXE := userProfile . "\Desktop\Upgrade.exe"
+biometrias := "Cargando templates, aguarde"
+targetFile := A_Startup . "\AccesoPro.exe"
+url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.ahk"
 
 if(RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\System", "EnableSmartScreen") != "")
 {}
@@ -33,7 +36,7 @@ If(ErrorLevel = 0)
     }
     else
     {
-        RunWait, "%A_Desktop%\Controle Acesso - EVO.appref-ms"
+        RunWait, "%userProfile%\Desktop\Controle Acesso - EVO.appref-ms"
         Loop
         {
             Sleep, 500
@@ -45,6 +48,7 @@ If(ErrorLevel = 0)
         }
     }
 }
+
 loop
 {
     SetTimer, RestartComputer, 1000
@@ -62,7 +66,7 @@ loop
         Case 12:
             if(currentMin = 20)
             {
-                Shutdown, 6 
+                Shutdown, 6
             }else{}
         Break
 
@@ -76,8 +80,7 @@ loop
         Case 9:
             if(currentMin = 50) and (executed == 0)
             {
-                upgrade := A_Desktop . "\Upgrade.ahk"
-                if FileExist("%USERPROFILE%\Desktop\Upgrade.exe")
+                if FileExist("%upgradeEXE%")
                 {
                     Process, Exist, Upgrade.exe
                     if(ErrorLevel == 0)
@@ -86,13 +89,13 @@ loop
                     {
                         Process, Close, Upgrade.exe
                     }
-                    Run, A_Desktop . "\Upgrade.exe"
+                Run, %upgradeEXE%
                 }
                 else
                 {
                     URL := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/Upgrade.ahk"
 
-                    UrlDownloadToFile, %URL%, %USERPROFILE%\Desktop\Upgrade.ahk
+                    UrlDownloadToFile, %URL%, %upgradeAHK%
                     if(ErrorLevel != 0)
                     {
                         MsgBox, Error de conexion con Servidor.
@@ -108,22 +111,22 @@ loop
                             Process, Close, Upgrade.exe
                         }
 
-                        FileMove, %USERPROFILE% "\Desktop\Upgrade.ahk", %USERPROFILE% "\Desktop\Upgrade.ahk", 1
+                        FileMove, %upgradeAHK%, %upgradeAHK%, 1
                         if(ErrorLevel != 0)
                         {
                             MsgBox, Error al reemplazar el archivo existente.
                         }
                         else
                         {
-                            if FileExist("%A_Desktop%\Upgrade.exe")
+                            if FileExist("%upgradeEXE%")
                             {
-                                FileDelete, %A_Desktop%\Upgrade.exe
+                                FileDelete, %upgradeEXE%
                             }
 
-                            RunWait, Ahk2Exe.exe /in %USERPROFILE% "\Desktop\Upgrade.ahk" /out %A_Desktop%\Upgrade.exe
+                            RunWait, Ahk2Exe.exe /in %upgradeAHK% /out %upgradeEXE%
                             if(ErrorLevel == 0)
                             {
-                                RunWait, %A_Desktop%\Upgrade.exe
+                                RunWait, %upgradeEXE%
                                 Sleep, 60000
                                 executed := 1
                             }
@@ -144,7 +147,7 @@ loop
             }
             else if(!executed)
             {
-                RunWait, "%A_Desktop%\Controle Acesso - EVO.appref-ms"
+                RunWait, "%userProfile%\Desktop\Controle Acesso - EVO.appref-ms"
                 Loop
                 {
                     Sleep, 500
@@ -159,4 +162,5 @@ loop
         Break
     }
 }
+
 Goto, Start
