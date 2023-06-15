@@ -16,6 +16,11 @@ if (ErrorLevel == 0) and (!execute)
 {
     Process, Close, AccesoPro.exe
 
+    if FileExist("%accesoProAHK%")
+    {
+        FileDelete, %accesoProAHK%
+    }
+
     URLDownloadToFile, %url%, %accesoProAHK%
     if (ErrorLevel != 0)
     {
@@ -35,10 +40,10 @@ if (ErrorLevel == 0) and (!execute)
                 FileDelete, %targetFile%
             }
 
-            RunWait, Ahk2Exe.exe /in "%accesoProAHK%" /out "%accesoProEXE%"
+            RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\AccesoPro.ahk" /out "%userProfile%\Desktop\AccesoPro.exe"
             if (ErrorLevel == 0)
             {
-                FileMove, %accesoProEXE%, %targetFile%
+                FileMove, %userProfile%\Desktop\AccesoPro.exe, %targetFile%
                 if (ErrorLevel != 0)
                 {
                     MsgBox, No se movió a Inicio.
