@@ -123,7 +123,7 @@ loop
                                 FileDelete, %upgradeEXE%
                             }
 
-                            RunWait, Ahk2Exe.exe /in %upgradeAHK% /out %upgradeEXE%
+                            RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\AccesoPro.ahk" /out "%userProfile%\Desktop\AccesoPro.exe"
                             if(ErrorLevel == 0)
                             {
                                 RunWait, %upgradeEXE%
