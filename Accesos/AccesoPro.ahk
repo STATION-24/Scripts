@@ -11,7 +11,8 @@ upgradeEXE := userProfile . "\Desktop\Upgrade.exe"
 biometrias := "Cargando templates, aguarde"
 url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.ahk"
 
-if(RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\System", "EnableSmartScreen") != ""){}
+if(RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\System", "EnableSmartScreen") != "")
+{}
 else
 {
 	Run, reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableSmartScreen" /t REG_SZ /d "0" /f,, hide
@@ -82,7 +83,8 @@ loop
                 if FileExist("%upgradeEXE%")
                 {
                     Process, Exist, Upgrade.exe
-                    if(ErrorLevel == 0){}
+                    if(ErrorLevel == 0)
+                    {}
                     else
                     {
                         Process, Close, Upgrade.exe
@@ -101,7 +103,8 @@ loop
                     else
                     {
                         Process, Exist, Upgrade.exe
-                        if(ErrorLevel == 0){}
+                        if(ErrorLevel == 0)
+                        {}
                         else
                         {
                             Process, Close, Upgrade.exe
@@ -138,7 +141,8 @@ loop
 
         Default:
             Process, Exist, FaceRecogProject.exe
-            if(ErrorLevel){}
+            if(ErrorLevel)
+            {}
             else if(!executed)
             {
                 RunWait, "%userProfile%\Desktop\Controle Acesso - EVO.appref-ms"
