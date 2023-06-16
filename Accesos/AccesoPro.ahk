@@ -5,14 +5,13 @@ VarSetCapacity(userProfile, 32767)
 DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", userProfile, "uint", 32767)
 
 execute := 0
+targetFile := A_Startup . "\AccesoPro.exe"
 upgradeAHK := userProfile . "\Desktop\Upgrade.ahk"
 upgradeEXE := userProfile . "\Desktop\Upgrade.exe"
 biometrias := "Cargando templates, aguarde"
-targetFile := A_Startup . "\AccesoPro.exe"
 url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.ahk"
 
-if(RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\System", "EnableSmartScreen") != "")
-{}
+if(RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\System", "EnableSmartScreen") != ""){}
 else
 {
 	Run, reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableSmartScreen" /t REG_SZ /d "0" /f,, hide
@@ -83,8 +82,7 @@ loop
                 if FileExist("%upgradeEXE%")
                 {
                     Process, Exist, Upgrade.exe
-                    if(ErrorLevel == 0)
-                    {}
+                    if(ErrorLevel == 0){}
                     else
                     {
                         Process, Close, Upgrade.exe
@@ -103,9 +101,7 @@ loop
                     else
                     {
                         Process, Exist, Upgrade.exe
-                        if(ErrorLevel == 0)
-                        {
-                        }
+                        if(ErrorLevel == 0){}
                         else
                         {
                             Process, Close, Upgrade.exe
@@ -123,7 +119,7 @@ loop
                                 FileDelete, %upgradeEXE%
                             }
 
-                            RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\AccesoPro.ahk" /out "%userProfile%\Desktop\AccesoPro.exe"
+                            RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\Upgrade.ahk" /out "%userProfile%\Desktop\Upgrade.exe"
                             if(ErrorLevel == 0)
                             {
                                 RunWait, %upgradeEXE%
@@ -142,9 +138,7 @@ loop
 
         Default:
             Process, Exist, FaceRecogProject.exe
-            if(ErrorLevel)
-            {
-            }
+            if(ErrorLevel){}
             else if(!executed)
             {
                 RunWait, "%userProfile%\Desktop\Controle Acesso - EVO.appref-ms"
