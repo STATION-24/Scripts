@@ -1,21 +1,27 @@
 Start:
+;Este script se desarrolló con la finalidad de mantener en correcto funcionamiento el equipo de computo utilizado en Accesos de STATION
 
 userProfile := ""
 VarSetCapacity(userProfile, 32767)
-DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", userProfile, "uint", 32767)
+DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", userProfile, "uint", 32767) ;Obtenemos el nombre de carpeta de usuario 
 
-execute := 0
-targetFile := A_Startup . "\AccesoPro.exe"
-upgradeAHK := userProfile . "\Desktop\Upgrade.ahk"
-upgradeEXE := userProfile . "\Desktop\Upgrade.exe"
-biometrias := "Cargando templates, aguarde"
-url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.ahk"
+execute := 0 ;Contador global
+upgradeAHK := userProfile . "\Desktop\Upgrade.ahk" ;Ruta de almacenamiento del AHK del Upgrade
+upgradeEXE := userProfile . "\Desktop\Upgrade.exe" ;Ruta de almacenamiento del EXE del Upgrade
+biometrias := "Cargando templates, aguarde" ;Nombre del Proceso de la carga de biometrias
+
+if (RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU", "NoAutoUpdate") != "")
+{}
+else
+{ ;Desactivamos las actualizaciones automaticas del Sistema Operativo 
+    RunWait, reg.exe add "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" /v NoAutoUpdate /t REG_DWORD /d 1 /f 
+}
 
 if(RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\System", "EnableSmartScreen") != "")
 {}
 else
-{
-	Run, reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableSmartScreen" /t REG_SZ /d "0" /f,, hide
+{ ;Desactivamos la proteccion con SmartScreen
+    Run, reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableSmartScreen" /t REG_SZ /d "0" /f,, hide
 }
 
 Process, Exist, FaceRecogProject.exe
@@ -61,7 +67,7 @@ loop
 	Sleep, 10000
     executed := 0
 
-    Switch (currentHour)
+    Switch(currentHour)
     {
         Case 12:
             if(currentMin = 20)
@@ -82,14 +88,19 @@ loop
             {
                 if FileExist("%upgradeEXE%")
                 {
-                    Process, Exist, Upgrade.exe
-                    if(ErrorLevel == 0)
-                    {}
-                    else
+                    Loop
                     {
-                        Process, Close, Upgrade.exe
+                        Process, Exist, Upgrade.exe
+                        if(ErrorLevel == 0)
+                        {
+                            Run, %upgradeEXE%
+                            Break
+                        }
+                        else
+                        {
+                            Process, Close, Upgrade.exe
+                        }
                     }
-                Run, %upgradeEXE%
                 }
                 else
                 {
@@ -125,7 +136,7 @@ loop
                             RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\Upgrade.ahk" /out "%userProfile%\Desktop\Upgrade.exe"
                             if(ErrorLevel == 0)
                             {
-                                RunWait, %upgradeEXE%
+                                Run, %upgradeEXE%
                                 Sleep, 60000
                                 executed := 1
                             }
