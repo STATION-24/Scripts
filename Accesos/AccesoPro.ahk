@@ -67,7 +67,7 @@ loop
 	Sleep, 10000
     executed := 0
 
-    Switch(currentHour)
+    Switch (currentHour)
     {
         Case 12:
             if(currentMin = 20)
