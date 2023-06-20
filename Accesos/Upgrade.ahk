@@ -6,10 +6,9 @@ DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", user
 
 execute := 0
 targetFile := A_Startup . "\AccesoPro.exe"
-url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.ahk"
-
 accesoProAHK := userProfile . "\Desktop\AccesoPro.ahk"
 accesoProEXE = userProfile . "\Desktop\AccesoPro.exe"
+url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.ahk"
 
 Process, Exist, AccesoPro.exe
 if (ErrorLevel == 0) and (!execute)
@@ -46,7 +45,7 @@ if (ErrorLevel == 0) and (!execute)
                 FileMove, %userProfile%\Desktop\AccesoPro.exe, %targetFile%
                 if (ErrorLevel != 0)
                 {
-                    MsgBox, No se movió a Inicio.
+                    MsgBox, El archivo no se pudo cargar a Inicio.
                 }
                 else
                 {
@@ -62,4 +61,5 @@ if (ErrorLevel == 0) and (!execute)
         execute := 1
     }
 }
+
 Goto, Start
