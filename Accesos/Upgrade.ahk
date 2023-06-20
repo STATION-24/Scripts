@@ -7,7 +7,7 @@ DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", user
 execute := 0
 targetFile := A_Startup . "\AccesoPro.exe"
 accesoProAHK := userProfile . "\Desktop\AccesoPro.ahk"
-accesoProEXE = userProfile . "\Desktop\AccesoPro.exe"
+accesoProEXE := userProfile . "\Desktop\AccesoPro.exe"
 url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.ahk"
 
 Process, Exist, AccesoPro.exe
