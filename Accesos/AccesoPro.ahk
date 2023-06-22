@@ -11,7 +11,7 @@ upgradeAHK := userProfile . "\Desktop\Upgrade.ahk" ;Ruta de almacenamiento del A
 upgradeEXE := userProfile . "\Desktop\Upgrade.exe" ;Ruta de almacenamiento del EXE del Upgrade
 biometrias := "Cargando templates, aguarde" ;Nombre del Proceso de la carga de biometrias
 
-if FileExist(%upgradeAHK%)
+if FileExist("%upgradeAHK%")
 {
     MsgBox, Holaa
 }
