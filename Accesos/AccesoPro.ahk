@@ -1,16 +1,20 @@
-﻿Start:
+Start:
 ;Este script se desarrolló con la finalidad de mantener en correcto funcionamiento el equipo de computo utilizado en Accesos de STATION
 
 userProfile := ""
 VarSetCapacity(userProfile, 32767)
 DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", userProfile, "uint", 32767) ;Obtenemos el nombre de carpeta de usuario 
 
-;TESTEO
 
 execute := 0 ;Contador global
 upgradeAHK := userProfile . "\Desktop\Upgrade.ahk" ;Ruta de almacenamiento del AHK del Upgrade
 upgradeEXE := userProfile . "\Desktop\Upgrade.exe" ;Ruta de almacenamiento del EXE del Upgrade
 biometrias := "Cargando templates, aguarde" ;Nombre del Proceso de la carga de biometrias
+
+if FileExist(%upgradeAHK%)
+{
+    MsgBox, Holaa
+}
 
 if (RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU", "NoAutoUpdate") != "")
 {}
@@ -86,7 +90,7 @@ loop
         Break
 
         Case 10:
-            if(currentMin = 35) and (executed == 0)
+            if(currentMin = 50) and (executed == 0)
             {
                 if FileExist("%upgradeEXE%")
                 {
