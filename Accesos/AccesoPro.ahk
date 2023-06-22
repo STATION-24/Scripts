@@ -76,15 +76,15 @@ loop
             }else{}
         Break
 
-        Case 10:
+        Case 11:
             if(currentMin = 20)
             {
                 Run, cmd.exe /c ipconfig /flushdns,, hide
             }else{}
         Break
 
-        Case 9:
-            if(currentMin = 50) and (executed == 0)
+        Case 10:
+            if(currentMin = 35) and (executed == 0)
             {
                 if FileExist("%upgradeEXE%")
                 {
@@ -104,47 +104,61 @@ loop
                 }
                 else
                 {
-                    URL := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/Upgrade.ahk"
+                    url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/Upgrade.ahk"
 
-                    UrlDownloadToFile, %URL%, %upgradeAHK%
-                    if(ErrorLevel != 0)
-                    {
-                        MsgBox, Error de conexion con Servidor.
-                    }
-                    else
-                    {
-                        Process, Exist, Upgrade.exe
-                        if(ErrorLevel == 0)
-                        {}
-                        else
-                        {
-                            Process, Close, Upgrade.exe
-                        }
+                    ; Realizar solicitud HTTP GET a la API de GitHub
+                    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                    http.Open("GET", url)
+                    http.Send()
+                    response := http.ResponseText
 
-                        FileMove, %upgradeAHK%, %upgradeAHK%, 1
+                    downloadUrl := RegExMatch(response, """download_url"":\s*""([^""]+)""", match)
+                    if (downloadUrl)
+                    {
+                        urlDownload := match1
+                        savePath := upgradeAHK
+                        URLDownloadToFile, %urlDownload%, %savePath%
                         if(ErrorLevel != 0)
                         {
-                            MsgBox, Error al reemplazar el archivo existente.
+                            MsgBox, Error de conexion con Servidor.
                         }
                         else
                         {
-                            if FileExist("%upgradeEXE%")
+                            Process, Exist, Upgrade.exe
+                            if(ErrorLevel != 0)
                             {
-                                FileDelete, %upgradeEXE%
-                            }
+                                Process, Close, Upgrade.exe
+                            }else{}
 
-                            RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\Upgrade.ahk" /out "%userProfile%\Desktop\Upgrade.exe"
-                            if(ErrorLevel == 0)
+                            FileMove, %upgradeAHK%, %upgradeAHK%, 1
+                            if(ErrorLevel != 0)
                             {
-                                Run, %upgradeEXE%
-                                Sleep, 60000
-                                executed := 1
+                                MsgBox, Error al reemplazar el archivo existente.
                             }
                             else
                             {
-                                MsgBox, Error al compilar Upgrade
+                                if FileExist("%upgradeEXE%")
+                                {
+                                    FileDelete, %upgradeEXE%
+                                }
+
+                                RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\Upgrade.ahk" /out "%userProfile%\Desktop\Upgrade.exe"
+                                if(ErrorLevel == 0)
+                                {
+                                    Run, %upgradeEXE%
+                                    Sleep, 60000
+                                    executed := 1
+                                }
+                                else
+                                {
+                                    MsgBox, Error al compilar Upgrade
+                                }
                             }
                         }
+                    }
+                    else
+                    {
+                        MsgBox, Error al obtener la descarga del archivo.
                     }
                 }
             }else{}
