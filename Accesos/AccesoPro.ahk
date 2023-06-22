@@ -1,10 +1,9 @@
-﻿Start:
+Start:
 ;Este script se desarrolló con la finalidad de mantener en correcto funcionamiento el equipo de computo utilizado en Accesos de STATION
 
 userProfile := ""
 VarSetCapacity(userProfile, 32767)
 DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", userProfile, "uint", 32767) ;Obtenemos el nombre de carpeta de usuario 
-
 
 execute := 0 ;Contador global
 upgradeAHK := userProfile . "\Desktop\Upgrade.ahk" ;Ruta de almacenamiento del AHK del Upgrade
@@ -107,9 +106,10 @@ loop
                 {
                     url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/Upgrade.ahk"
 
-                    ; Realizar solicitud HTTP GET a la API de GitHub
+                    ; Realizar solicitud HTTP GET a la API de GitHub con autenticación
                     http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
                     http.Open("GET", url)
+                    http.SetRequestHeader("Authorization", "token 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")
                     http.Send()
                     response := http.ResponseText
 
@@ -121,7 +121,7 @@ loop
                         URLDownloadToFile, %urlDownload%, %savePath%
                         if(ErrorLevel != 0)
                         {
-                            MsgBox, Error de conexion con Servidor.
+                            MsgBox, Error de conexión con el servidor.
                         }
                         else
                         {
@@ -152,7 +152,7 @@ loop
                                 }
                                 else
                                 {
-                                    MsgBox, Error al compilar Upgrade
+                                    MsgBox, Error al compilar Upgrade.
                                 }
                             }
                         }
