@@ -1,4 +1,4 @@
-﻿Start:
+Start:
 ;Este script se desarrolló con la finalidad de mantener en correcto funcionamiento el equipo de computo utilizado en Accesos de STATION
 
 userProfile := ""
@@ -109,7 +109,6 @@ loop
                     ; Realizar solicitud HTTP GET a la API de GitHub con autenticación
                     http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
                     http.Open("GET", url)
-                    http.SetRequestHeader("Authorization", "token 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")
                     http.Send()
                     response := http.ResponseText
 
