@@ -5,6 +5,8 @@ userProfile := ""
 VarSetCapacity(userProfile, 32767)
 DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", userProfile, "uint", 32767) ;Obtenemos el nombre de carpeta de usuario 
 
+;TESTEO
+
 execute := 0 ;Contador global
 upgradeAHK := userProfile . "\Desktop\Upgrade.ahk" ;Ruta de almacenamiento del AHK del Upgrade
 upgradeEXE := userProfile . "\Desktop\Upgrade.exe" ;Ruta de almacenamiento del EXE del Upgrade
