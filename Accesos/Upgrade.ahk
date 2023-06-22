@@ -1,4 +1,4 @@
-﻿Start:
+Start:
 
 userProfile := ""
 VarSetCapacity(userProfile, 32767)
@@ -11,13 +11,6 @@ accesoProEXE := userProfile . "\Desktop\AccesoPro.exe"
 
 url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/AccesoPro.ahk"
 
-; Realizar solicitud HTTP GET a la API de GitHub con autenticación
-http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-http.Open("GET", url)
-http.SetRequestHeader("Authorization", "token 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")
-http.Send()
-response := http.ResponseText
-
 Process, Exist, AccesoPro.exe
 if (ErrorLevel == 0) and (!execute)
 {
@@ -27,6 +20,12 @@ if (ErrorLevel == 0) and (!execute)
     {
         FileDelete, %accesoProAHK%
     }
+
+    ; Realizar solicitud HTTP GET a la API de GitHub
+    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    http.Open("GET", url)
+    http.Send()
+    response := http.ResponseText
 
     downloadUrl := RegExMatch(response, """download_url"":\s*""([^""]+)""", match)
     if (downloadUrl)
@@ -39,7 +38,7 @@ if (ErrorLevel == 0) and (!execute)
         }
         else
         {
-            FileMove, %accesoProAHK%, %accesoProAHK%, 1
+            FileMove, %accesoProAHK%, %accesoProAHK%, 1x
             if (ErrorLevel != 0)
             {
                 MsgBox, Error al reemplazar el archivo existente.
