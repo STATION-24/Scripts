@@ -11,9 +11,10 @@ accesoProEXE := userProfile . "\Desktop\AccesoPro.exe"
 
 url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/AccesoPro.ahk"
 
-; Realizar solicitud HTTP GET a la API de GitHub
+; Realizar solicitud HTTP GET a la API de GitHub con autenticación
 http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 http.Open("GET", url)
+http.SetRequestHeader("Authorization", "token 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")
 http.Send()
 response := http.ResponseText
 
