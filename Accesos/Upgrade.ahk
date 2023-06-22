@@ -8,7 +8,14 @@ execute := 0
 targetFile := A_Startup . "\AccesoPro.exe"
 accesoProAHK := userProfile . "\Desktop\AccesoPro.ahk"
 accesoProEXE := userProfile . "\Desktop\AccesoPro.exe"
-url := "https://raw.githubusercontent.com/STATION-24/Scripts/main/Accesos/AccesoPro.ahk"
+
+url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/AccesoPro.ahk"
+
+; Realizar solicitud HTTP GET a la API de GitHub
+http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+http.Open("GET", url)
+http.Send()
+response := http.ResponseText
 
 Process, Exist, AccesoPro.exe
 if (ErrorLevel == 0) and (!execute)
@@ -20,46 +27,46 @@ if (ErrorLevel == 0) and (!execute)
         FileDelete, %accesoProAHK%
     }
 
-    URLDownloadToFile, %url%, %accesoProAHK%
-    if (ErrorLevel != 0)
+    downloadUrl := RegExMatch(response, """download_url"":\s*""([^""]+)""", match)
+    if (downloadUrl)
     {
-        MsgBox, Error de conexión con el servidor.
-    }
-    else
-    {
-        FileMove, %accesoProAHK%, %accesoProAHK%, 1
+        urlDownload := match1
+        URLDownloadToFile, %urlDownload%, %accesoProAHK%
         if (ErrorLevel != 0)
         {
-            MsgBox, Error al reemplazar el archivo existente.
+            MsgBox, Error de conexión con el servidor.
         }
         else
         {
-            if FileExist(targetFile)
+            FileMove, %accesoProAHK%, %accesoProAHK%, 1
+            if (ErrorLevel != 0)
             {
-                FileDelete, %targetFile%
-            }
-
-            RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\AccesoPro.ahk" /out "%userProfile%\Desktop\AccesoPro.exe"
-            if (ErrorLevel == 0)
-            {
-                FileMove, %userProfile%\Desktop\AccesoPro.exe, %targetFile%
-                if (ErrorLevel != 0)
-                {
-                    MsgBox, El archivo no se pudo cargar a Inicio.
-                }
-                else
-                {
-                    Run, %targetFile%
-                    Sleep, 60000
-                }
+                MsgBox, Error al reemplazar el archivo existente.
             }
             else
             {
-                MsgBox, Error al compilar AccesoPro.
+                if FileExist(targetFile)
+                {
+                    FileDelete, %targetFile%
+                }
+        
+                RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\AccesoPro.ahk" /out "%targetFile%"
+                if (ErrorLevel == 0)
+                {
+                    Run, %targetFile%
+                    Sleep, 60000
+                    execute := 1  
+                }
+                else
+                {
+                    MsgBox, Error al compilar AccesoPro.
+                }
             }
         }
-        execute := 1
+    }
+    else
+    {
+        MsgBox, Error al obtener la URL de descarga del archivo.
     }
 }
-
 Goto, Start
