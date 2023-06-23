@@ -1,16 +1,26 @@
 Start:
 ;Script de Acrualizacion de script de Accesos
 
+execute := 0 ;Contador Global
+
 userProfile := ""
 VarSetCapacity(userProfile, 32767)
 DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", userProfile, "uint", 32767) ;Obtenemos el nombre de carpeta de usuario 
 
-execute := 0 ;Obtenemos el nombre de carpeta de usuario 
+url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/AccesoPro.ahk" ;Link a API Git Repo
 targetFile := A_Startup . "\AccesoPro.exe" ;Ruta de destino del EXE de Accesos
 accesoProAHK := userProfile . "\Desktop\AccesoPro.ahk" ;Ruta de almacenamiento del AHK de Accesos
 accesoProEXE := userProfile . "\Desktop\AccesoPro.exe" ;Ruta de almacenamiento del EXE de Accesos
 
-url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/AccesoPro.ahk" ;Link a API Git Repo
+SSHTATION := userProfile . "\Desktop\SSHTATION.txt" ; Ruta de almacenamiento de SSH_KEY.txt
+SSHKey := ""
+
+FileRead, SSHKey, %SSHTATION%
+if (ErrorLevel)
+{
+    MsgBox, No se pudo encontrar las credenciales del servidor.
+    ExitApp
+}
 
 Process, Exist, AccesoPro.exe ;Revision de existencia del proceso del script de Accesos
 if (ErrorLevel == 0) and (!execute)
@@ -23,6 +33,7 @@ if (ErrorLevel == 0) and (!execute)
     }
 
     ; Realizar solicitud HTTP GET a la API de GitHub
+    http.SetRequestHeader("Authorization", "token " . SSHKey)
     http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
     http.Open("GET", url)
     http.Send()
@@ -32,7 +43,7 @@ if (ErrorLevel == 0) and (!execute)
     if (downloadUrl) ;Generamos el link de descarga desde la API
     {
         urlDownload := match1
-        
+
         URLDownloadToFile, %urlDownload%, %accesoProAHK% ;Descargamos el archivo desde la API de Github
         if (ErrorLevel != 0)
         { ;Error de Conexion con server
