@@ -24,13 +24,13 @@ else
     Run, reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\System" /v "EnableSmartScreen" /t REG_SZ /d "0" /f,, hide
 }
 
-Process, Exist, FaceRecogProject.exe
+Process, Exist, FaceRecogProject.exe ;Revisamos la existencia del proceso del Control de Acccesos
 If(ErrorLevel = 0)
-{
+{ ;Si el nivel de error es 0
     url = www.google.com
-    RunWait, ping.exe %url% -n 1,, Hide UseErrorlevel
+    RunWait, ping.exe %url% -n 1,, Hide UseErrorlevel ;Ping para revisar estado de la red
     if(Errorlevel)
-    {
+    { ;Si el resultado del Ping no es satisfactorio
         Secs := 20
         SetTimer, CountDown, 1000
         MsgBox, 1, CONEXIÓN PERDIDA, REVISA TU CONEXIÓN A INTERNET `nAbriendo control de acceso en` %Secs%, %Secs%
@@ -41,22 +41,22 @@ If(ErrorLevel = 0)
         Goto, Start
     }
     else
-    {
-        RunWait, "%userProfile%\Desktop\Controle Acesso - EVO.appref-ms"
+    { ;Si el resultado del Ping es satisfactorio
+        RunWait, "%userProfile%\Desktop\Controle Acesso - EVO.appref-ms" ;Abrimos el Control de Accesos
         Loop
-        {
+        { ;Loop de Revision de la existencia del proceso de carga de biometrias
             Sleep, 500
             Process, Exist, biometrias
             if(ErrorLevel = 0)
             {
-                break
+                break ;Si el proceso deja de existir seguimos con el proximo Loop
             }
         }
     }
 }
 
 loop
-{
+{ ;Loop de Mtto
     SetTimer, RestartComputer, 1000
     RestartComputer:
     currentHour := A_Hour
@@ -67,43 +67,43 @@ loop
 	Sleep, 10000
     executed := 0
 
-    Switch (currentHour)
+    Switch (currentHour) ;Comparamos activamente la Hora
     {
-        Case 12:
-            if(currentMin = 20)
+        Case 12: 
+            if(currentMin = 20) ; Si son las 12:20
             {
-                Shutdown, 6
+                Shutdown, 6 ; Reiniciamos el equipo
             }else{}
         Break
 
         Case 11:
-            if(currentMin = 20)
+            if(currentMin = 20) ; Si son las 11:20
             {
-                Run, cmd.exe /c ipconfig /flushdns,, hide
+                Run, cmd.exe /c ipconfig /flushdns,, hide ; Limpiamos Bus serial y Cache 
             }else{}
         Break
 
         Case 10:
-            if(currentMin = 50) and (executed == 0)
-            {
-                if FileExist("%upgradeEXE%")
-                {
+            if(currentMin = 50) and (executed == 0) ; Si son las 10:50
+            { ; Iniciamos el proceso de Actualizacion del Script
+                if FileExist("%upgradeEXE%") 
+                { ;Si el archivo ya existe en el equipo
                     Loop
                     {
                         Process, Exist, Upgrade.exe
                         if(ErrorLevel == 0)
-                        {
-                            Run, %upgradeEXE%
-                            Break
+                        { ;Si no se esta ejecutando
+                            Run, %upgradeEXE% ;Arrancamos la rutina de Actualizacion
+                            Break ;Salimos del Loop
                         }
                         else
-                        {
-                            Process, Close, Upgrade.exe
+                        { ;Si ya se esta ejecutando
+                            Process, Close, Upgrade.exe ;Cerramos el proceso 
                         }
                     }
                 }
                 else
-                {
+                { ;Si el archivo no existe
                     url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/Upgrade.ahk"
 
                     ; Realizar solicitud HTTP GET a la API de GitHub con autenticación
@@ -113,74 +113,74 @@ loop
                     response := http.ResponseText
 
                     downloadUrl := RegExMatch(response, """download_url"":\s*""([^""]+)""", match)
-                    if (downloadUrl)
-                    {
+                    if (downloadUrl) ;Generamos el link de descarga desde la API
+                    { 
                         urlDownload := match1
                         savePath := upgradeAHK
-                        URLDownloadToFile, %urlDownload%, %savePath%
+                        URLDownloadToFile, %urlDownload%, %savePath% ;Descargamos el archivo desde la API de Github
                         if(ErrorLevel != 0)
-                        {
+                        { ;Error de Conexion com server
                             MsgBox, Error de conexión con el servidor.
                         }
                         else
-                        {
-                            Process, Exist, Upgrade.exe
+                        { ;Descarga en proceso
+                            Process, Exist, Upgrade.exe 
                             if(ErrorLevel != 0)
-                            {
-                                Process, Close, Upgrade.exe
+                            { ;Si el proceso existe
+                                Process, Close, Upgrade.exe ;Cerramos el proceso
                             }else{}
 
-                            FileMove, %upgradeAHK%, %upgradeAHK%, 1
+                            FileMove, %upgradeAHK%, %upgradeAHK%, 1 ;Movemos el archivo o remplazamos por si mismo
                             if(ErrorLevel != 0)
-                            {
-                                MsgBox, Error al reemplazar el archivo existente.
+                            { ;Si no se pudo mover
+                                MsgBox, Error al reemplazar el archivo existente. ;Error
                             }
                             else
-                            {
-                                if FileExist("%upgradeEXE%")
-                                {
-                                    FileDelete, %upgradeEXE%
+                            { ;Si se realizo el remplazo o movimiento con exito
+                                if FileExist("%upgradeEXE%") ;Revisamos la existencia del archivo exe
+                                { ;Si el archivo existe
+                                    FileDelete, %upgradeEXE% ;Eliminamos el archivo existente
                                 }
 
-                                RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\Upgrade.ahk" /out "%userProfile%\Desktop\Upgrade.exe"
+                                RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\Upgrade.ahk" /out "%userProfile%\Desktop\Upgrade.exe" ; Compilamos el archivo ahk a exe
                                 if(ErrorLevel == 0)
-                                {
-                                    Run, %upgradeEXE%
-                                    Sleep, 60000
-                                    executed := 1
+                                { ;Si el archivo se compiló con exito
+                                    Run, %upgradeEXE% ;Corremos el ejecutable e inicia actualizacion
+                                    Sleep, 60000 ;Esperamos un minuto para dar espera a que Upgrade cierre este script
+                                    executed := 1 ;Seteamos la ejecucion como 1 para hacer el break de la condicional
                                 }
                                 else
-                                {
-                                    MsgBox, Error al compilar Upgrade.
+                                { ;Si no se pudo compilar correctamente
+                                    MsgBox, Error al compilar Upgrade. ;Error
                                 }
                             }
                         }
                     }
                     else
-                    {
-                        MsgBox, Error al obtener la descarga del archivo.
+                    { ;No se pudo generar el link desde la API
+                        MsgBox, Error al obtener la descarga del archivo. ;Error
                     }
                 }
             }else{}
         Break
 
-        Default:
-            Process, Exist, FaceRecogProject.exe
+        Default: ;Default, a toda hora no especificada en los case anteriores
+            Process, Exist, FaceRecogProject.exe ;Revisamos la existencia del proceso de Control Accesos
             if(ErrorLevel)
             {}
             else if(!executed)
-            {
-                RunWait, "%userProfile%\Desktop\Controle Acesso - EVO.appref-ms"
+            { ;Si no se esta ejecutando y no se ha ejecutado esta sentencia
+                RunWait, "%userProfile%\Desktop\Controle Acesso - EVO.appref-ms" ;Corremos el programa de Control de Accesos
                 Loop
-                {
+                { ; Loop de revision de existencia de la carga de biometrias
                     Sleep, 500
                     Process, Exist, biometrias
                     if(ErrorLevel = 0)
                     {
-                        Break
+                        Break ;Break del Loop
                     }
                 }
-                executed := 1
+                executed := 1 ;Seteamos la ejecucion como 1 para hacer el break de la condicional
             }
         Break
     }
