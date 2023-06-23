@@ -19,7 +19,6 @@ FileRead, SSHKey, %SSHTATION%
 if (ErrorLevel)
 {
     MsgBox, No se pudo encontrar las credenciales del servidor.
-    ExitApp
 }
 
 Process, Exist, AccesoPro.exe ;Revision de existencia del proceso del script de Accesos
