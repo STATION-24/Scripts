@@ -11,14 +11,13 @@ upgradeAHK := userProfile . "\Desktop\Upgrade.ahk" ;Ruta de almacenamiento del A
 upgradeEXE := userProfile . "\Desktop\Upgrade.exe" ;Ruta de almacenamiento del EXE del Upgrade
 biometrias := "Cargando templates, aguarde" ;Nombre del Proceso de la carga de biometrias
 
-SSHTATION := userProfile . "\Desktop\SSHTATION.txt" ;Ruta de almacenamiento de SSH K
+SSHTATION := userProfile . "\Desktop\SSHTATION.txt" ; Ruta de almacenamiento de SSH_KEY.txt
 SSHKey := ""
 
 FileRead, SSHKey, %SSHTATION%
 if (ErrorLevel)
 {
     MsgBox, No se pudo encontrar las credenciales del servidor.
-    ExitApp
 }
 
 if (RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU", "NoAutoUpdate") != "")
@@ -118,9 +117,9 @@ loop
                     url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/Upgrade.ahk"
 
                     ; Realizar solicitud HTTP GET a la API de GitHub con autenticación
+                    http.SetRequestHeader("Authorization", "token " . SSHKey)
                     http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
                     http.Open("GET", url)
-                    http.SetRequestHeader("Authorization", "token " . SSHKey)
                     http.Send()
                     response := http.ResponseText
 
