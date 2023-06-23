@@ -1,14 +1,25 @@
 Start:
 ;Este script se desarrolló con la finalidad de mantener en correcto funcionamiento el equipo de computo utilizado en Accesos de STATION
 
+execute := 0 ;Contador global
+
 userProfile := ""
 VarSetCapacity(userProfile, 32767)
 DllCall("kernel32\ExpandEnvironmentStrings", "str", "%USERPROFILE%", "str", userProfile, "uint", 32767) ;Obtenemos el nombre de carpeta de usuario 
 
-execute := 0 ;Contador global
 upgradeAHK := userProfile . "\Desktop\Upgrade.ahk" ;Ruta de almacenamiento del AHK del Upgrade
 upgradeEXE := userProfile . "\Desktop\Upgrade.exe" ;Ruta de almacenamiento del EXE del Upgrade
 biometrias := "Cargando templates, aguarde" ;Nombre del Proceso de la carga de biometrias
+
+SSHTATION := userProfile . "\Desktop\SSHTATION.txt" ;Ruta de almacenamiento de SSH K
+SSHKey := ""
+
+FileRead, SSHKey, %SSHTATION%
+if (ErrorLevel)
+{
+    MsgBox, No se pudo encontrar las credenciales del servidor.
+    ExitApp
+}
 
 if (RegExMatch("HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU", "NoAutoUpdate") != "")
 {}
@@ -86,7 +97,7 @@ loop
         Case 9:
             if(currentMin = 50) and (executed == 0) ; Si son las 10:50
             { ; Iniciamos el proceso de Actualizacion del Script
-                if FileExist("%upgradeEXE%") 
+                if FileExist("%upgradeEXE%")
                 { ;Si el archivo ya existe en el equipo
                     Loop
                     {
@@ -109,14 +120,16 @@ loop
                     ; Realizar solicitud HTTP GET a la API de GitHub con autenticación
                     http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
                     http.Open("GET", url)
+                    http.SetRequestHeader("Authorization", "token " . SSHKey)
                     http.Send()
                     response := http.ResponseText
 
                     downloadUrl := RegExMatch(response, """download_url"":\s*""([^""]+)""", match)
                     if (downloadUrl) ;Generamos el link de descarga desde la API
-                    { 
+                    {
                         urlDownload := match1
                         savePath := upgradeAHK
+
                         URLDownloadToFile, %urlDownload%, %savePath% ;Descargamos el archivo desde la API de Github
                         if(ErrorLevel != 0)
                         { ;Error de Conexion com server
