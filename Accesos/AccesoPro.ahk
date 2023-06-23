@@ -76,14 +76,14 @@ loop
             }else{}
         Break
 
-        Case 11:
+        Case 10:
             if(currentMin = 20) ; Si son las 11:20
             {
                 Run, cmd.exe /c ipconfig /flushdns,, hide ; Limpiamos Bus serial y Cache 
             }else{}
         Break
 
-        Case 10:
+        Case 9:
             if(currentMin = 50) and (executed == 0) ; Si son las 10:50
             { ; Iniciamos el proceso de Actualizacion del Script
                 if FileExist("%upgradeEXE%") 
@@ -124,7 +124,7 @@ loop
                         }
                         else
                         { ;Descarga en proceso
-                            Process, Exist, Upgrade.exe 
+                            Process, Exist, Upgrade.exe
                             if(ErrorLevel != 0)
                             { ;Si el proceso existe
                                 Process, Close, Upgrade.exe ;Cerramos el proceso
