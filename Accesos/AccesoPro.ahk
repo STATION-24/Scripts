@@ -90,6 +90,7 @@ loop
             if(currentMin = 20) ; Si son las 11:20
             {
                 Run, cmd.exe /c ipconfig /flushdns,, hide ; Limpiamos Bus serial y Cache 
+		Run, cmd.exe /c ipconfig /allcompartments /all,, hide ; Refrescamos la conexion con internet
             }else{}
         Break
 
