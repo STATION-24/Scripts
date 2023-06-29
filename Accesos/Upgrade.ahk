@@ -21,64 +21,71 @@ if (ErrorLevel)
     MsgBox, No se pudo encontrar las credenciales del servidor.
 }
 
-Process, Exist, AccesoPro.exe ;Revision de existencia del proceso del script de Accesos
-if (ErrorLevel == 0) and (!execute)
-{ ;Sí el Script esta en ejecucion
-    Process, Close, AccesoPro.exe ;Cerramos el Script 
+Pingy = www.google.com
+RunWait, ping.exe %Pingy% -n 1,, Hide UseErrorlevel ;Ping para revisar estado de la red
+if(ErrorLevel)
+{
+}else
+{
+    Process, Exist, AccesoPro.exe ;Revision de existencia del proceso del script de Accesos
+    if (ErrorLevel == 0) and (!execute)
+    { ;Sí el Script esta en ejecucion
+        Process, Close, AccesoPro.exe ;Cerramos el Script 
 
-    if FileExist("%accesoProAHK%") ;Revisamos la existenccia del archivo del script de Accesos
-    { ;Si el archivo existe
-        FileDelete, %accesoProAHK% ;Eliminamos el archivo
-    }
-
-    ; Realizar solicitud HTTP GET a la API de GitHub
-    http.SetRequestHeader("Authorization", "token " . SSHKey)
-    http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-    http.Open("GET", url)
-    http.Send()
-    response := http.ResponseText
-
-    downloadUrl := RegExMatch(response, """download_url"":\s*""([^""]+)""", match)
-    if (downloadUrl) ;Generamos el link de descarga desde la API
-    {
-        urlDownload := match1
-
-        URLDownloadToFile, %urlDownload%, %accesoProAHK% ;Descargamos el archivo desde la API de Github
-        if (ErrorLevel != 0)
-        { ;Error de Conexion con server
-            MsgBox, Error de conexión con el servidor.
+        if FileExist("%accesoProAHK%") ;Revisamos la existenccia del archivo del script de Accesos
+        { ;Si el archivo existe
+            FileDelete, %accesoProAHK% ;Eliminamos el archivo
         }
-        else
-        { ;Descarga en proceso
-            FileMove, %accesoProAHK%, %accesoProAHK%, 1 ;Movemos/Remplazamos el archivo descargado por el destino
+
+        ; Realizar solicitud HTTP GET a la API de GitHub
+        http.SetRequestHeader("Authorization", "token " . SSHKey)
+        http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+        http.Open("GET", url)
+        http.Send()
+        response := http.ResponseText
+
+        downloadUrl := RegExMatch(response, """download_url"":\s*""([^""]+)""", match)
+        if (downloadUrl) ;Generamos el link de descarga desde la API
+        {
+            urlDownload := match1
+
+            URLDownloadToFile, %urlDownload%, %accesoProAHK% ;Descargamos el archivo desde la API de Github
             if (ErrorLevel != 0)
-            { ;Si no se pudo mover
-                MsgBox, Error al reemplazar el archivo existente. ;Error
+            { ;Error de Conexion con server
+                MsgBox, Error de conexión con el servidor.
             }
             else
-            { ;Si la descarga se realizo con exito
-                if FileExist(targetFile) ;Si existe el archivo EXE de destino
-                {
-                    FileDelete, %targetFile% ;Borramos el archivo
-                }
-        
-                RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\AccesoPro.ahk" /out "%targetFile%" ;Compilamos el archivo AHK en EXE
-                if (ErrorLevel == 0)
-                { ;Si el archivo se compiló con exito
-                    Run, %targetFile% ;Ejecutamos el nuevo Script
-                    Sleep, 60000 
-                    execute := 1  
+            { ;Descarga en proceso
+                FileMove, %accesoProAHK%, %accesoProAHK%, 1 ;Movemos/Remplazamos el archivo descargado por el destino
+                if (ErrorLevel != 0)
+                { ;Si no se pudo mover
+                    MsgBox, Error al reemplazar el archivo existente. ;Error
                 }
                 else
-                { ;Si no se compila exitosamente
-                    MsgBox, Error al compilar AccesoPro. ;Error
+                { ;Si la descarga se realizo con exito
+                    if FileExist(targetFile) ;Si existe el archivo EXE de destino
+                    {
+                        FileDelete, %targetFile% ;Borramos el archivo
+                    }
+                    
+                    RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\AccesoPro.ahk" /out "%targetFile%" ;Compilamos el archivo AHK en EXE
+                    if (ErrorLevel == 0)
+                    { ;Si el archivo se compiló con exito
+                        Run, %targetFile% ;Ejecutamos el nuevo Script
+                        Sleep, 60000
+                        execute := 1 
+                    }
+                    else
+                    { ;Si no se compila exitosamente
+                        MsgBox, Error al compilar AccesoPro. ;Error
+                    }
                 }
             }
         }
-    }
-    else
-    { ;Si no se pudo generar link de descarga 
-        MsgBox, Error al obtener la URL de descarga del archivo. ;Error
+        else
+        { ;Si no se pudo generar link de descarga 
+            MsgBox, Error al obtener la URL de descarga del archivo. ;Error
+        }
     }
 }
 Goto, Start
