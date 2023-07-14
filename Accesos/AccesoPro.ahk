@@ -79,7 +79,7 @@ loop
 
     Switch (currentHour) ;Comparamos activamente la Hora
     {
-        Case 12: 
+        Case 12:
             if(currentMin = 20) ; Si son las 12:20
             {
                 Shutdown, 6 ; Reiniciamos el equipo
@@ -93,90 +93,95 @@ loop
             }else{}
         Break
 
-        Case 14:
-            if(currentMin = 30) and (executed == 0) ; Si son las 10:50
+        Case 9:
+            if(currentMin = 53) and (executed == 0) ; Si son las 10:50
             { ; Iniciamos el proceso de Actualizacion del Script
                 pingy := www.google.com
                 RunWait, ping.exe %pingy% -n 1,, Hide UseErrorlevel ;Ping para revisar estado de la red
                 if(Errorlevel)
                 {
+                    Sleep, 60000 ;Esperamos un minuto para dar espera a que Upgrade cierre este script
+                    Goto, Start
                 }else
                 {
-                    if FileExist("%upgradeEXE%")
-                    { ;Si el archivo ya existe en el equipo
-                        Loop
-                        {
-                            Process, Exist, Upgrade.exe
-                            if(ErrorLevel == 0)
-                            { ;Si no se esta ejecutando
-                                Run, %upgradeEXE% ;Arrancamos la rutina de Actualizacion
-                                Break ;Salimos del Loop
-                            }
-                            else
-                            { ;Si ya se esta ejecutando
-                                Process, Close, Upgrade.exe ;Cerramos el proceso 
-                            }
-                        }
-                    }
-                    else
-                    { ;Si el archivo no existe
-                        url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/Upgrade.ahk"
-    
-                        ; Realizar solicitud HTTP GET a la API de GitHub con autenticación
-                        http.SetRequestHeader("Authorization", "token " . SSHKey)
-                        http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-                        http.Open("GET", url)
-                        http.Send()
-                        response := http.ResponseText
-        
-                        downloadUrl := RegExMatch(response, """download_url"":\s*""([^""]+)""", match)
-                        if (downloadUrl) ;Generamos el link de descarga desde la API
-                        {
-                            urlDownload := match1
-                            savePath := upgradeAHK
-    
-                            URLDownloadToFile, %urlDownload%, %savePath% ;Descargamos el archivo desde la API de Github
-                            if(ErrorLevel != 0)
-                            { ;Error de Conexion com server
-                                MsgBox, Error de conexión con el servidor.
-                            }
-                            else
-                            { ;Descarga en proceso
+                    if(pingOutput<100)
+                    {
+                        if FileExist("%upgradeEXE%")
+                        { ;Si el archivo ya existe en el equipo
+                            Loop
+                            {
                                 Process, Exist, Upgrade.exe
-                                if(ErrorLevel != 0)
-                                { ;Si el proceso existe
-                                    Process, Close, Upgrade.exe ;Cerramos el proceso
-                                }else{}
-    
-                                FileMove, %upgradeAHK%, %upgradeAHK%, 1 ;Movemos el archivo o remplazamos por si mismo
-                                if(ErrorLevel != 0)
-                                { ;Si no se pudo mover
-                                    MsgBox, Error al reemplazar el archivo existente. ;Error
+                                if(ErrorLevel == 0)
+                                { ;Si no se esta ejecutando
+                                    Run, %upgradeEXE% ;Arrancamos la rutina de Actualizacion
+                                    Break ;Salimos del Loop
                                 }
                                 else
-                                { ;Si se realizo el remplazo o movimiento con exito
-                                    if FileExist("%upgradeEXE%") ;Revisamos la existencia del archivo exe
-                                    { ;Si el archivo existe
-                                        FileDelete, %upgradeEXE% ;Eliminamos el archivo existente
-                                    }
-        
-                                    RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\Upgrade.ahk" /out "%userProfile%\Desktop\Upgrade.exe" ; Compilamos el archivo ahk a exe
-                                    if(ErrorLevel == 0)
-                                    { ;Si el archivo se compiló con exito
-                                        Run, %upgradeEXE% ;Corremos el ejecutable e inicia actualizacion
-                                        Sleep, 60000 ;Esperamos un minuto para dar espera a que Upgrade cierre este script
-                                        executed := 1 ;Seteamos la ejecucion como 1 para hacer el break de la condicional
-                                    }
-                                    else
-                                    { ;Si no se pudo compilar correctamente
-                                        MsgBox, Error al compilar Upgrade. ;Error
-                                    }
+                                { ;Si ya se esta ejecutando
+                                    Process, Close, Upgrade.exe ;Cerramos el proceso 
                                 }
                             }
                         }
                         else
-                        { ;No se pudo generar el link desde la API
-                            MsgBox, Error al obtener la descarga del archivo. ;Error
+                        { ;Si el archivo no existe
+                            url := "https://api.github.com/repos/STATION-24/Scripts/contents/Accesos/Upgrade.ahk"
+    
+                            ; Realizar solicitud HTTP GET a la API de GitHub con autenticación
+                            http.SetRequestHeader("Authorization", "token " . SSHKey)
+                            http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+                            http.Open("GET", url)
+                            http.Send()
+                            response := http.ResponseText
+                            
+                            downloadUrl := RegExMatch(response, """download_url"":\s*""([^""]+)""", match)
+                            if (downloadUrl) ;Generamos el link de descarga desde la API
+                            {
+                                urlDownload := match1
+                                savePath := upgradeAHK
+                                
+                                URLDownloadToFile, %urlDownload%, %savePath% ;Descargamos el archivo desde la API de Github
+                                if(ErrorLevel != 0)
+                                { ;Error de Conexion com server
+                                    MsgBox, Error de conexión con el servidor.
+                                }
+                                else
+                                { ;Descarga en proceso
+                                    Process, Exist, Upgrade.exe
+                                    if(ErrorLevel != 0)
+                                    { ;Si el proceso existe
+                                        Process, Close, Upgrade.exe ;Cerramos el proceso
+                                    }else{}
+    
+                                    FileMove, %upgradeAHK%, %upgradeAHK%, 1 ;Movemos el archivo o remplazamos por si mismo
+                                    if(ErrorLevel != 0)
+                                    { ;Si no se pudo mover
+                                        MsgBox, Error al reemplazar el archivo existente. ;Error
+                                    }
+                                    else
+                                    { ;Si se realizo el remplazo o movimiento con exito
+                                        if FileExist("%upgradeEXE%") ;Revisamos la existencia del archivo exe
+                                        { ;Si el archivo existe
+                                            FileDelete, %upgradeEXE% ;Eliminamos el archivo existente
+                                        }
+                                        
+                                        RunWait, Ahk2Exe.exe /in "%userProfile%\Desktop\Upgrade.ahk" /out "%userProfile%\Desktop\Upgrade.exe" ; Compilamos el archivo ahk a exe
+                                        if(ErrorLevel == 0)
+                                        { ;Si el archivo se compiló con exito
+                                            Run, %upgradeEXE% ;Corremos el ejecutable e inicia actualizacion
+                                            Sleep, 60000 ;Esperamos un minuto para dar espera a que Upgrade cierre este script
+                                            executed := 1 ;Seteamos la ejecucion como 1 para hacer el break de la condicional
+                                        }
+                                        else
+                                        { ;Si no se pudo compilar correctamente
+                                            MsgBox, Error al compilar Upgrade. ;Error
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            { ;No se pudo generar el link desde la API
+                                MsgBox, Error al obtener la descarga del archivo. ;Error
+                            }
                         }
                     }
                 }
