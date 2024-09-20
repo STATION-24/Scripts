@@ -82,7 +82,7 @@ loop
         Case 12:
             if(currentMin = 20) ; Si son las 12:20
             {
-                Shutdown, 6 ; Reiniciamos el equipo
+                ;Shutdown, 6
             }else{}
         Break
 
